@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rođendanski Poklon</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: hotpink;
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+        }
+        .instruction {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .flower-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-top: 80px;
+        }
+        .stem {
+            width: 30px;
+            height: 300px;
+            background-color: green;
+            position: absolute;
+            top: 125px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .leaf {
+            width: 60px;
+            height: 30px;
+            background-color: green;
+            position: absolute;
+            border-radius: 50%;
+        }
+        .leaf.left {
+            left: -50px;
+            top: 120px;
+            transform: rotate(-30deg);
+        }
+        .leaf.right {
+            right: -50px;
+            top: 150px;
+            transform: rotate(30deg);
+        }
+        .flower {
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+        }
+        .petal {
+            position: absolute;
+            width: 120px;
+            height: 160px;
+            background-color: #9c27b0;
+            border-radius: 50%;
+            transform-origin: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .petal:hover {
+            transform: scale(1.1);
+        }
+        .petal:nth-child(1) { transform: rotate(0deg) translateY(10px); left: 100px; top: -40px; }
+        .petal:nth-child(2) { transform: rotate(60deg) translateY(-10px); left: 190px; top: 30px; }
+        .petal:nth-child(3) { transform: rotate(120deg) translateY(30px); left: 220px; top: 145px; }
+        .petal:nth-child(4) { transform: rotate(180deg) translateY(40px); left: 90px; top: 210px; }
+        .petal:nth-child(5) { transform: rotate(240deg) translateY(50px); left: -50px; top: 140px; }
+        .petal:nth-child(6) { transform: rotate(300deg) translateY(70px); left: -60px; top: -30px; }
+        .center {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ffeb3b;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            font-size: 20px;
+        }
+        .lightbox img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .lightbox p {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="instruction">Klik na laticu otvara sliku</h2>
+    <div class="flower-container">
+        <div class="flower">
+            <div class="petal" onclick="showImage(0)"></div>
+            <div class="petal" onclick="showImage(1)"></div>
+            <div class="petal" onclick="showImage(2)"></div>
+            <div class="petal" onclick="showImage(3)"></div>
+            <div class="petal" onclick="showImage(4)"></div>
+            <div class="petal" onclick="showImage(5)"></div>
+            <div class="center"></div>
+        </div>
+        <div class="stem">
+            <div class="leaf left"></div>
+            <div class="leaf right"></div>
+        </div>
+    </div>
+    <div class="lightbox" onclick="hideImage()">
+        <img id="lightbox-img" src="" alt="Slika">
+        <p id="lightbox-text"></p>
+    </div>
+    <script>
+        const images = [
+            "slika1.jpg", "slika2.jpg", "slika3.jpg", "slika4.jpg", "slika5.jpg", "slika6.jpg"
+        ];
+        const descriptions = [
+            "M𝘢𝘮𝘪𝘤𝘦 𝘮𝘰𝘫𝘢 𝘯𝘢𝘫𝘥𝘳𝘢ž𝘢,ž𝘦𝘭𝘪𝘮 𝘵𝘪 𝘯𝘢𝘫𝘴𝘳𝘦ć𝘯𝘪𝘫𝘪 𝘳𝘰đ𝘦𝘯𝘥𝘢𝘯 𝘪 𝘻𝘦𝘭𝘪𝘮 𝘵𝘪 𝘴𝘷𝘦 𝘯𝘢𝘫𝘥𝘪𝘷𝘯𝘪𝘫𝘦.", 
+            "Želim da ti zahvalim za sve što si ikad uradila za mene i želim da znaš da te ne bih menjala ni za šta na svetu. Nezameljiva si.", 
+            "Znam da zvuči kliše kad kažem da si najbolja majka na svetu, jer svako dete to misli za svoju majku koja mu je podarila život. Ali ja to zaista mislim i mnogo te volim.", 
+            "𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 š𝘵𝘰 𝘴𝘪 𝘮𝘦 𝘯𝘢𝘶č𝘪𝘭𝘢 𝘥𝘢 𝘱𝘪š𝘦𝘮 𝘪 š𝘵𝘰 𝘴𝘪 𝘮𝘦 '𝘭𝘫𝘶š𝘵𝘪𝘭𝘢 𝘬𝘰 𝘬𝘳𝘢𝘴𝘵𝘢𝘷𝘢𝘤' 𝘥𝘰𝘬 𝘯𝘪𝘴𝘢𝘮 𝘪𝘴𝘱𝘳𝘢𝘷𝘪𝘭𝘢 𝘮𝘰𝘫𝘢 '𝘱𝘪𝘫𝘢𝘯𝘢 𝘴𝘭𝘰𝘷𝘢' 𝘢𝘭 𝘫𝘦𝘭𝘵𝘦 𝘴𝘢𝘥 𝘪𝘮𝘢𝘮 𝘯𝘢𝘫𝘭𝘦𝘱š𝘪 𝘳𝘶𝘬𝘰𝘱𝘪𝘴, 𝘱𝘢 𝘯𝘪𝘫𝘦 𝘣𝘪𝘭𝘰 𝘶𝘻𝘢𝘭𝘶𝘥𝘯𝘰 𝘩𝘢𝘩𝘢. 𝘉𝘪𝘭𝘢 𝘴𝘪 𝘮𝘰𝘫 𝘱𝘳𝘷𝘪 𝘪 𝘰𝘮𝘪𝘭𝘫𝘦𝘯𝘪 𝘶č𝘪𝘵𝘦𝘭𝘫. 𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 š𝘵𝘰 𝘴𝘪 𝘱𝘳𝘪𝘩𝘷𝘢𝘵𝘢𝘭𝘢 𝘮𝘰𝘫𝘦 𝘱𝘳𝘪𝘫𝘢𝘵𝘦𝘭𝘫𝘦 𝘪𝘢𝘬𝘰 𝘴𝘪 𝘻𝘯𝘢𝘭𝘢 𝘥𝘢 𝘯𝘪𝘴𝘶 𝘥𝘰𝘣𝘳𝘪, 𝘢𝘭𝘪 𝘴𝘪 𝘴𝘦 𝘶𝘷𝘦𝘬 𝘵𝘳𝘶𝘥𝘪𝘭𝘢 𝘥𝘢 𝘴𝘦 𝘰𝘴𝘦ć𝘢𝘫𝘶 𝘥𝘰𝘣𝘳𝘰𝘥𝘰𝘴𝘭𝘰 𝘪 𝘱𝘳𝘪𝘫𝘢𝘵𝘯𝘰 𝘶 𝘯𝘢š𝘦𝘮 𝘥𝘰𝘮𝘶.𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 𝘻𝘢 𝘴𝘷𝘢𝘬𝘪 𝘴𝘱𝘳𝘦𝘮𝘭𝘫𝘦𝘯𝘪 𝘰𝘣𝘳𝘰𝘬.𝘈 𝘥𝘢 𝘪 𝘩𝘷𝘢𝘭𝘢 𝘵𝘪 š𝘵𝘰 𝘴𝘪 𝘴𝘦 𝘵𝘰𝘭𝘪𝘬𝘰 𝘵𝘳𝘶𝘥𝘪𝘭𝘢 𝘥𝘢 𝘪𝘮𝘢𝘮 𝘱𝘳𝘦𝘭𝘦𝘱𝘶 𝘩𝘢𝘭𝘫𝘪𝘯𝘶 𝘻𝘢 𝘥𝘳𝘶𝘨𝘢𝘳𝘴𝘬𝘰 𝘪𝘢𝘬𝘰 𝘴𝘪 𝘻𝘯𝘢𝘭𝘢 𝘥𝘢 ć𝘶 𝘫𝘦 𝘰𝘣𝘶ć𝘪 𝘴𝘢𝘮𝘰 𝘫𝘦𝘥𝘯𝘰𝘮.", 
+            "𝘜𝘱𝘳𝘢𝘷𝘰 𝘻𝘣𝘰𝘨 𝘵𝘰𝘨𝘢 𝘴𝘦 𝘯𝘢𝘥𝘢𝘮 𝘥𝘢 ć𝘦š 𝘣𝘪𝘵𝘪 𝘱𝘰𝘳𝘦𝘥 𝘮𝘦𝘯𝘦  𝘬𝘢𝘥 𝘣𝘶𝘥𝘦𝘮 𝘣𝘪𝘳𝘢𝘭𝘢 𝘴𝘷𝘰𝘫𝘶 𝘷𝘦𝘯č𝘢𝘯𝘪𝘤𝘶, 𝘫𝘦𝘥𝘯𝘰𝘨 𝘥𝘢𝘯𝘢. 𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 𝘻𝘢 𝘴𝘷𝘦 𝘱𝘳𝘢𝘻𝘯𝘪𝘬𝘦 𝘪 𝘻𝘢 𝘴𝘷𝘢𝘬𝘪 𝘴𝘱𝘳𝘦𝘮𝘭𝘫𝘦𝘯 𝘳𝘰đ𝘦𝘯𝘥𝘢𝘯, 𝘻𝘢𝘩𝘷𝘢𝘭𝘫𝘶𝘫𝘶ć𝘪 𝘵𝘦𝘣𝘪 𝘴𝘷𝘢𝘬𝘪 𝘳𝘰đ𝘦𝘯𝘥𝘢𝘯 𝘮𝘪 𝘫𝘦 𝘣𝘪𝘰 𝘴𝘱𝘦𝘤𝘪𝘫𝘢𝘭𝘢𝘯 𝘪 𝘪𝘮𝘢𝘭𝘢 𝘴𝘢𝘮 𝘯𝘢𝘫𝘣𝘰𝘭𝘫𝘦 𝘳𝘰đ𝘦𝘯𝘥𝘢𝘯𝘦. 𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 𝘻𝘢 𝘴𝘷𝘢𝘬𝘶 𝘶𝘴𝘱𝘰𝘮𝘦𝘯𝘶 𝘪 𝘻𝘢 𝘴𝘷𝘦 𝘯𝘦𝘻𝘢𝘣𝘰𝘳𝘢𝘷𝘯𝘦 𝘵𝘳𝘦𝘯𝘶𝘵𝘬𝘦 𝘬𝘰𝘫𝘦 𝘴𝘮𝘰 𝘱𝘳𝘰ž𝘪𝘷𝘦𝘭𝘦 𝘻𝘢𝘫𝘦𝘥𝘯𝘰. 𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 𝘻𝘢 𝘱𝘳𝘦𝘭𝘦𝘱𝘰 𝘥𝘦𝘵𝘪𝘯𝘫𝘴𝘵𝘷𝘰 𝘪 𝘩𝘷𝘢𝘭𝘢 𝘵𝘪 š𝘵𝘰 𝘴𝘪 𝘮𝘦 𝘻𝘢𝘴𝘮𝘦𝘫𝘢𝘷𝘢𝘭𝘢 č𝘢𝘬 𝘪 𝘬𝘢𝘥𝘢 𝘵𝘪 𝘯𝘪𝘫𝘦 𝘣𝘪𝘭𝘰 𝘥𝘰 𝘵𝘰𝘨𝘢, 𝘶𝘷𝘦𝘬 𝘴𝘪 𝘴𝘦 𝘵𝘳𝘶𝘥𝘪𝘭𝘢 𝘥𝘢 𝘣𝘶𝘥𝘦𝘮 𝘷𝘦𝘴𝘦𝘭𝘢 𝘪 𝘯𝘢𝘴𝘮𝘦𝘫𝘢𝘯𝘢.", 
+            "𝘔𝘰ž𝘥𝘢 𝘥𝘦𝘭𝘶𝘫𝘦 𝘬𝘢𝘰 𝘥𝘢 𝘯𝘪𝘴𝘢𝘮 𝘥𝘰𝘷𝘰𝘭𝘫𝘯𝘰 𝘻𝘢𝘩𝘷𝘢𝘭𝘯𝘢 𝘻𝘢 𝘴𝘷𝘦 š𝘵𝘰 𝘴𝘪 𝘶č𝘪𝘯𝘪𝘭𝘢 𝘻𝘢 𝘮𝘦𝘯𝘦 𝘪 𝘴𝘵𝘰 č𝘪𝘯𝘪š 𝘪 𝘥𝘢𝘯 𝘥𝘢𝘯𝘢𝘴. 𝘕𝘪𝘫𝘦 𝘵𝘢𝘬𝘰. 𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 𝘻𝘢 𝘴𝘷𝘢𝘬𝘪 𝘴𝘢𝘷𝘦𝘵, 𝘶𝘵𝘦𝘩𝘶, 𝘬𝘳𝘪𝘵𝘪𝘬𝘶 𝘪 𝘻𝘢 𝘴𝘷𝘦 š𝘵𝘰 𝘴𝘪 𝘶𝘳𝘢𝘥𝘪𝘭𝘢 𝘻𝘢 𝘮𝘦𝘯𝘦. 𝘏𝘷𝘢𝘭𝘢 𝘵𝘪 𝘻𝘢 𝘱𝘰ž𝘳𝘵𝘷𝘰𝘷𝘢𝘯𝘰𝘴𝘵. 𝘒𝘢𝘻𝘶 𝘥𝘢 𝘴𝘶 𝘮𝘢𝘫𝘬𝘦 𝘉𝘰ž𝘫𝘪 𝘢𝘯đ𝘦𝘭𝘪 𝘬𝘰𝘫𝘦 𝘫𝘦 𝘉𝘰𝘨 𝘱𝘰𝘴𝘭𝘢𝘰 𝘥𝘢 𝘣𝘳𝘪𝘯𝘶 𝘰 𝘥𝘦𝘤𝘪. 𝘚𝘷𝘢𝘬𝘰𝘨 𝘥𝘢𝘯𝘢 𝘻𝘢𝘩𝘷𝘢𝘭𝘫𝘶𝘫𝘦𝘮 𝘉𝘰𝘨𝘶 š𝘵𝘰 𝘴𝘪 𝘮𝘪 𝘣𝘢š 𝘵𝘪 𝘮𝘢𝘫𝘬𝘢 𝘪 š𝘵𝘰 𝘴𝘪 𝘣𝘢š 𝘵𝘪 𝘮𝘰𝘫 𝘢𝘯đ𝘦𝘰 č𝘶𝘷𝘢𝘳. 𝘉𝘥𝘪𝘭𝘢 𝘴𝘪 𝘯𝘢𝘥𝘢 𝘮𝘯𝘰𝘮 𝘬𝘢𝘥 𝘨𝘰𝘥 𝘣𝘪𝘩 𝘪𝘮𝘢𝘭𝘢 𝘣𝘭𝘢𝘨𝘶 𝘱𝘳𝘦𝘩𝘭𝘢𝘥𝘶, 𝘥𝘰ž𝘪𝘷𝘭𝘫𝘢𝘷𝘢𝘭𝘢 𝘴𝘪 𝘵𝘰 𝘮𝘯𝘰𝘨𝘰 𝘰𝘻𝘣𝘪𝘭𝘫𝘯𝘪𝘫𝘦 𝘰𝘥 𝘮𝘦𝘯𝘦. 𝘈𝘬𝘰 𝘵𝘰 𝘯𝘪𝘫𝘦 𝘭𝘫𝘶𝘣𝘢𝘷, 𝘰𝘯𝘥𝘢 𝘯𝘦 𝘻𝘯𝘢𝘮 š𝘵𝘢 𝘫𝘦. 𝘋𝘢 𝘯𝘦 𝘥𝘶ž𝘪𝘮 𝘷𝘪š𝘦.. 𝘷𝘰𝘭𝘪𝘮 𝘵𝘦 𝘯𝘢𝘫𝘷𝘪š𝘦 𝘯𝘢 𝘴𝘷𝘦𝘵𝘶 𝘪 𝘯𝘢𝘥𝘢𝘮 𝘴𝘦 𝘥𝘢 ć𝘶 𝘫𝘦𝘥𝘯𝘰𝘨 𝘥𝘢𝘯𝘢 𝘣𝘢𝘳𝘦𝘮 𝘶𝘱𝘰𝘭𝘢 𝘣𝘪𝘵𝘪 𝘥𝘰𝘣𝘳𝘢 𝘮𝘢𝘫𝘬𝘢 𝘱𝘰𝘱𝘶𝘵 𝘵𝘦𝘣𝘦 𝘪 𝘥𝘢 ć𝘶 𝘫𝘦𝘥𝘯𝘰𝘨 𝘥𝘢𝘯𝘢 𝘪 𝘫𝘢 𝘣𝘪𝘵𝘪 𝘯𝘦č𝘪𝘫𝘪 𝘢𝘯đ𝘦𝘰 č𝘶𝘷𝘢𝘳."
+        ];
+        
+        function showImage(index) {
+            document.getElementById("lightbox-img").src = images[index];
+            document.getElementById("lightbox-text").innerText = descriptions[index];
+            document.querySelector(".lightbox").style.display = "flex";
+        }
+        
+        function hideImage() {
+            document.querySelector(".lightbox").style.display = "none";
+        }
+    </script>
+</body>
+</html>
